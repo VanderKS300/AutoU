@@ -5,9 +5,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from flask import Flask, send_from_directory
-# Importa o db da nova classe de modelo
 from src.models.user import db
-# Importa as novas rotas de usuário
 from src.routes.user import user_bp
 from src.routes.email_classifier_simple import email_classifier_bp
 
@@ -16,24 +14,18 @@ static_folder = os.path.join(os.path.dirname(__file__), 'static')
 app = Flask(__name__, static_folder=static_folder)
 app.config['SECRET_KEY'] = 'asdf#FGSgvasgf$5$WGT'
 
-# Configura o banco de dados SQLite para criar o arquivo app.db
-app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(os.path.dirname(__file__), 'database', 'app.db')}"
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-# Inicializa o banco de dados com a aplicação
-db.init_app(app)
-with app.app_context():
-    # Cria as tabelas do banco de dados, se ainda não existirem
-    db.create_all()
+# Comente todas as linhas relacionadas ao banco de dados para evitar o erro de permissão.
+# app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(os.path.dirname(__file__), 'database', 'app.db')}"
+# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# db.init_app(app)
+# with app.app_context():
+#     db.create_all()
 
 # Registra os Blueprints (conjuntos de rotas) na aplicação
-# Registra as rotas de usuário
 app.register_blueprint(user_bp, url_prefix='/api')
-# Registra as rotas do classificador de e-mails
 app.register_blueprint(email_classifier_bp, url_prefix='/api')
 
 @app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
 def serve(path):
     """
     Serve os arquivos estáticos, incluindo o index.html como padrão.
